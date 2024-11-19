@@ -1,0 +1,21 @@
+# Ignore these meta files when repository archive gets created.
+# Usful when it gets required via `composer require` command.
+/.github/                export-ignore
+/.tools/                 export-ignore
+/tests/                  export-ignore
+/examples/               export-ignore
+/.gitattributes          export-ignore
+/.gitignore              export-ignore
+/.wp-env.json            export-ignore
+/.editorconfig           export-ignore
+/.nvmrc                  export-ignore
+/package.json            export-ignore
+/package-lock.json       export-ignore
+/composer.lock           export-ignore
+/phpunit.xml.dist        export-ignore
+/phpcs.xml.dist          export-ignore
+/lint-stage.config.mjs   export-ignore
+/psalm.xml.dist          export-ignore
+/psalm.xml               export-ignore
+/rector.php              export-ignore
+/docs                    export-ignore

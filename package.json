@@ -1,0 +1,33 @@
+{
+	"name": "cosmo-users",
+	"private": true,
+	"description": "WordPress Custom Plugin to Show Users via Ajax.",
+	"author": "rumur",
+	"license": "MIT",
+	"keywords": [
+		"WordPress"
+	],
+	"engines": {
+		"node": ">=20.0.0"
+	},
+	"homepage": "https://github.com/rumur/cosmo-users",
+	"scripts": {
+		"env": "wp-env",
+		"start": "wp-env start",
+		"stop": "wp-env stop",
+		"stop-all": "docker stop $(docker ps -a -q)",
+		"composer": "wp-env run wordpress --env-cwd=wp-content/plugins/plugin-working-dir -- composer",
+		"wp": "wp-env run cli",
+		"lint": "npm run composer -- lint",
+		"lint:fix": "npm run composer -- lint:fix",
+		"rector": "npm run composer -- rector",
+		"rector:fix": "npm run composer -- rector:fix",
+		"test": "wp-env run tests-wordpress --env-cwd=wp-content/plugins/plugin-working-dir -- composer test",
+		"prepare": "git config core.hooksPath ./.tools/git-hooks",
+		"preinstall": "composer install --ignore-platform-reqs"
+	},
+	"devDependencies": {
+		"@wordpress/env": "^10.11.0",
+		"lint-staged": "^15.2.10"
+	}
+}
