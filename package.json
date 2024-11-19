@@ -12,6 +12,8 @@
 	},
 	"homepage": "https://github.com/rumur/cosmo-users",
 	"scripts": {
+    "assets:dev": "wp-scripts start assets/index.js",
+    "assets:build": "wp-scripts build assets/index.js",
 		"env": "wp-env",
 		"start": "wp-env start",
 		"stop": "wp-env stop",
@@ -27,7 +29,8 @@
 		"preinstall": "composer install --ignore-platform-reqs"
 	},
 	"devDependencies": {
-		"@wordpress/env": "^10.11.0",
+		"@wordpress/env": "^10.12.0",
+		"@wordpress/scripts": "^30.5.1",
 		"lint-staged": "^15.2.10"
 	}
 }
