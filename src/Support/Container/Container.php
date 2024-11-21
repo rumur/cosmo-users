@@ -178,11 +178,17 @@ class Container implements ContainerContract
 
         $this->overrideArgsWith($args);
 
-        $this->instances[$abstract] = $this->build($abstract);
+        $resolved = $this->build($abstract);
 
         $this->withdrawLatestArgs();
 
-        return $this->instances[$abstract];
+        // In case it's registered we can store w/i the container, otherwise we ignore to save memory.
+        // It may happen when a class is not bound but being resolved via container.
+        if ($this->has($abstract)) {
+            $this->instances[$abstract] = $resolved;
+        }
+
+        return $resolved;
     }
 
     /**
@@ -363,7 +369,6 @@ class Container implements ContainerContract
      */
     protected function resolveClass(ReflectionParameter $dependency) // phpcs:ignore Inpsyde.CodeQuality.ReturnTypeDeclaration.NoReturnType -- We use a generic type for autocomplete.
     {
-
         try {
             return $this->resolve($this->dependencyToParamName($dependency));
         } catch (NotInstantiable) {
