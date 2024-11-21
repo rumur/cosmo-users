@@ -22,12 +22,13 @@
   },
 	"autoload-dev": {
 		"psr-4": {
-			"Rumur\\WordPress\\CosmoUsers\\Tests\\": "tests/"
+			"Rumur\\WordPress\\CosmoUsers\\Tests\\Unit\\": "tests/PHPUnit/Unit/"
 		}
 	},
   "require": {
     "php": ">=8.1.0",
-    "ext-json": "*"
+    "ext-json": "*",
+    "psr/container": "^2.0"
   },
   "extra": {
     "wordpress-install-dir": ".tools/wp"
