@@ -12,6 +12,7 @@ use ReflectionFunction;
 use ReflectionNamedType;
 use ReflectionParameter;
 use Rumur\WordPress\CosmoUsers\Container as ContainerContract;
+use Rumur\WordPress\CosmoUsers\Support\Container\Exceptions\AlreadyInstantiated;
 use Rumur\WordPress\CosmoUsers\Support\Container\Exceptions\NotInstantiable;
 
 /**
@@ -109,15 +110,21 @@ class Container implements ContainerContract
      * Binds the abstracts with their implementations.
      *
      * @param class-string<TInstance> $abstract The abstract key.
-     * @param TConcrete|class-string<TInstance>|null $concrete The class of the implementation.
-     * @param bool $singleton Optional. Marks class as singleton.
+     * @param TConcrete|null $concrete The implementation or a factory to create an instance with,
+     *                                null if the abstract is the same as the concrete implementation.
+     * @param bool $singleton Marks class as singleton.
      *
      * @return static
+     *
+     * @throws AlreadyInstantiated When abstract has been instantiated as singleton, and we attempt to bind it again.
      */
     public function bind(string $abstract, $concrete = null, bool $singleton = false): static
     {
-        if (null === $concrete) {
-            $concrete = $abstract;
+        $concrete ??= $abstract;
+
+        // Check if the abstract has already been instantiated, if so we throw an exception.
+        if (isset($this->singletons[$abstract], $this->instances[$abstract])) {
+            throw Exceptions\AlreadyInstantiated::default(esc_attr($abstract));
         }
 
         if ($singleton) {
@@ -225,7 +232,7 @@ class Container implements ContainerContract
             $reflector = new ReflectionClass($concrete);
 
             if (!$reflector->isInstantiable()) {
-                throw Exceptions\NotInstantiable::default($abstract);
+                throw Exceptions\NotInstantiable::default(esc_attr($abstract));
             }
 
             $constructor = $reflector->getConstructor();

@@ -6,6 +6,7 @@ namespace Rumur\WordPress\CosmoUsers;
 
 use Psr\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
+use Rumur\WordPress\CosmoUsers\Support\Container\Exceptions\AlreadyInstantiated;
 use Rumur\WordPress\CosmoUsers\Support\Container\Exceptions\NotInstantiable;
 
 /**
@@ -31,6 +32,8 @@ interface Container extends ContainerInterface
      * @param bool $singleton Whether current abstract should be treated as a singleton.
      *
      * @return static
+     *
+     * @throws AlreadyInstantiated In case if the abstract has already been instantiated, and we try to bind it again.
      */
     public function bind(string $abstract, $concrete = null, bool $singleton = false): static;
 
@@ -65,6 +68,8 @@ interface Container extends ContainerInterface
      * @param TConcrete|null $concrete The implementation or a factory to create an instance with.
      *
      * @return static
+     *
+     * @throws AlreadyInstantiated In case if the abstract has already been instantiated, and we try to bind it again.
      */
     public function singleton(string $abstract, $concrete = null): static;
 }

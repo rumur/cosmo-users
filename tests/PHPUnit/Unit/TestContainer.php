@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rumur\WordPress\CosmoUsers\Tests\Unit;
 
 use Rumur\WordPress\CosmoUsers\Support\Container\Container;
+use Rumur\WordPress\CosmoUsers\Support\Container\Exceptions\AlreadyInstantiated;
 use Rumur\WordPress\CosmoUsers\Support\Container\Exceptions\NotFound;
 use Rumur\WordPress\CosmoUsers\Support\Container\Exceptions\NotInstantiable;
 
@@ -113,5 +114,17 @@ class TestContainer extends TestCase
     {
         $this->expectException(NotFound::class);
         (new Container)->get(\UnresolvableClass::class);
+    }
+
+    public function testBindThrowsExceptionForAlreadyInstantiatedClass(): void
+    {
+        $container = new Container();
+        $container->singleton(Fixtures\SomeClass::class);
+
+        $resolved = $container->resolve(Fixtures\SomeClass::class);
+
+        $this->expectException(AlreadyInstantiated::class);
+        // Here we should get an exception.
+        $container->singleton(Fixtures\SomeClass::class, Fixtures\SomeDependency::class);
     }
 }
