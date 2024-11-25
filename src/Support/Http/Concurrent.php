@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rumur\WordPress\CosmoUsers\Support\Client;
+namespace Rumur\WordPress\CosmoUsers\Support\Http;
 
 use Closure;
 use Exception;
@@ -21,7 +21,7 @@ use WpOrg\Requests\Requests as WpOrgRequests;
  *
  * @since 0.1.0
  *
- * @package Rumur\WordPress\CosmoUsers\Support\Client
+ * @package Rumur\WordPress\CosmoUsers\Support\Http
  */
 class Concurrent implements Client
 {
@@ -30,7 +30,7 @@ class Concurrent implements Client
      *
      * Example:
      * ```
-     *  Dispatcher::dispatch([
+     *  Concurrent::resolve([
      *    fn() => wp_remote_get('https://jsonplaceholder.typicode.com/todos/1'),
      *    fn() => wp_safe_remote_get('https://jsonplaceholder.typicode.com/todos/2'),
      *    fn() => wp_remote_post('https://jsonplaceholder.typicode.com/posts', [
@@ -41,7 +41,7 @@ class Concurrent implements Client
      *
      * @param iterable<callable> $requests Collection of request callables.
      *
-     * @return array Resolved responses.
+     * @return array<array> Resolved responses.
      *
      * @throws Throwable
      */
