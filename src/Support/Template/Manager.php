@@ -48,7 +48,7 @@ class Manager implements Template, Locator
     public function locate(string $path): string
     {
         // Ensure that the path includes the desired file extension.
-        if (!str_ends_with($path, '.php')) {
+        if (false === preg_match('/\.(html|php)?/', $path)) {
             $path .= '.php';
         }
 
