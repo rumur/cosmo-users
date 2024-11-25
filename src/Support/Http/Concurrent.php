@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rumur\WordPress\CosmoUsers\Support\Dispatcher;
+namespace Rumur\WordPress\CosmoUsers\Support\Client;
 
 use Closure;
 use Exception;
