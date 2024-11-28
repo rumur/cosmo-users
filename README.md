@@ -1,5 +1,7 @@
 # [READ ONLY] WordPress Cosmo Users Plugin.
 
+### Author: Ruslan Murarov.
+
 ### Minimum Requirements:
  - PHP: 8.1+
  - WordPress: 6.6+
@@ -68,6 +70,34 @@ For more details check the [Http README](src/Support/Http/README.md).
 The `Cache` instance is responsible for managing the cache data.
 It provides a simple way to store and retrieve data from the cache.
 For more details check the [Cache README](src/Support/Cache/README.md).
+
+## [Transformer](src/Support/Transformer/README.md)
+
+The `Transformer` and `DataTransformer` interfaces facilitate the transformation of data from one format to another.
+To add a new transformer you can create a new class that implements the `DataTransformer` interface.
+
+Example:
+```php
+use Rumur\WordPress\Cosmo\Users\Support\Transformer\DataTransformer;
+
+class MyTransformer implements DataTransformer
+{
+    public function transform($data)
+    {
+        return [
+            'id' => absint($data['id'] ?? 0),
+            'fullName' => esc_attr($data['username_full_name'] ?? 'n/a'),
+            'email' => esc_attr($data['email'] ?? 'n/a'),
+            'userPhone' => esc_attr($data['user_phone'] ?? 'n/a'),
+            'website' => esc_attr($data['website'] ?? 'n/a'),
+            'description' => wp_kses_post($data['description'] ?? 'n/a'),
+        ];
+    }
+}
+
+$transformedCollection = $plugin->transformer->collection([...], new MyTransformer());
+$transformedItem = $plugin->transformer->item([...], new MyTransformer()); 
+```
 
 ## License
   This package is licensed under the MIT License - see the [LICENSE.md](https://github.com/rumur/cosmo-users/blob/master/LICENSE) file for details.
