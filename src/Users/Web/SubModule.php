@@ -138,7 +138,7 @@ class SubModule implements ModuleContract
         global $wp_query;
 
         if (array_key_exists(static::ENDPOINT_USERS, $wp_query->query_vars)) {
-            echo wp_kses_post($this->renderPageHtml());
+            echo $this->renderPageHtml(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- It's being escaped inside the method.
             die();
         }
     }
@@ -202,8 +202,10 @@ class SubModule implements ModuleContract
     {
         ob_start();
         get_header();
-        echo do_blocks( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- It's being escaped later as possible inside parseRequest
-            $this->template->render('users-table.html')
+        echo wp_kses_post(
+            do_blocks(
+                $this->template->render('users-table.html')
+            )
         );
         get_footer();
         return ob_get_clean();
