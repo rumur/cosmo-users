@@ -1,7 +1,8 @@
 {
   "core": "./.tools/wp",
   "mappings": {
-    "wp-content/plugins/plugin-working-dir": "."
+    "wp-content/plugins/plugin-working-dir": ".",
+    "wp-content/themes/twentytwentyfive": "./.tools/wp/wp-content/themes/twentytwentyfive"
   },
   "themes": [
     "WordPress/twentytwentyfive"
