@@ -15,19 +15,19 @@
   "autoload" : {
     "psr-4" : {
       "Rumur\\WordPress\\CosmoUsers\\": "src/"
-    },
-    "files": [
-      "src/helpers.php"
-    ]
+    }
   },
 	"autoload-dev": {
 		"psr-4": {
-			"Rumur\\WordPress\\CosmoUsers\\Tests\\": "tests/"
+			"Rumur\\WordPress\\CosmoUsers\\Tests\\Unit\\": "tests/PHPUnit/Unit/"
 		}
 	},
   "require": {
     "php": ">=8.1.0",
-    "ext-json": "*"
+    "ext-json": "*",
+    "psr/container": "^2.0",
+    "psr/simple-cache": "^3.0",
+    "league/fractal": "^0.20.1"
   },
   "extra": {
     "wordpress-install-dir": ".tools/wp"
@@ -43,13 +43,14 @@
 		"squizlabs/php_codesniffer": "^3.10",
 		"inpsyde/php-coding-standards": "^2@dev",
 		"wp-phpunit/wp-phpunit": "^6.7",
-		"roots/wordpress-full": "^6.7",
+		"roots/wordpress-no-content": "^6.7",
 		"rector/rector": "^1.2",
 		"roots/wordpress-core-installer": "^1.100",
 		"phpunit/phpunit": "^9.6",
 		"yoast/phpunit-polyfills": "^3.0"
   },
   "config": {
+    "optimize-autoloader": true,
     "allow-plugins": {
       "roots/wordpress-core-installer": true,
       "dealerdirect/phpcodesniffer-composer-installer": true

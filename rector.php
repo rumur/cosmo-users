@@ -14,9 +14,9 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->bootstrapFiles([
     ]);
 
-	$rectorConfig->phpVersion(
-		PhpVersion::PHP_81,
-	);
+    $rectorConfig->phpVersion(
+        PhpVersion::PHP_81,
+    );
 
     // define sets of rules
     $rectorConfig->sets([

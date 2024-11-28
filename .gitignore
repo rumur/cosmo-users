@@ -7,6 +7,7 @@ composer.lock
 package-lock.json
 .phpunit.result.cache
 *.local.*
+*.override.*
 *.log
 .DS_Store
 .env.*
