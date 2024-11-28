@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Rumur\WordPress\CosmoUsers;
 
 /**
- * Interface DataTransformer
+ * Interface Transformer
  *
  * @since 0.1.0
  *
