@@ -46,6 +46,26 @@ class Collection implements Arrayable, \IteratorAggregate, \Countable, \JsonSeri
     }
 
     /**
+     * Filters the items in the collection by a given callback or keys.
+     *
+     * @return TValue|null The value of the first item in the collection.
+     */
+    public function first(): mixed
+    {
+        return $this->items[array_key_first($this->items)] ?? null;
+    }
+
+    /**
+     * Get the last item from the collection.
+     *
+     * @return TValue|null The value of the last item in the collection.
+     */
+    public function last(): mixed
+    {
+        return $this->items[array_key_last($this->items)] ?? null;
+    }
+
+    /**
      * Maps the items into a new collection.
      *
      * @param callable(TValue,TKey):TValue $callback The callback to filter the items.
