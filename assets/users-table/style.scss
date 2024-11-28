@@ -1,0 +1,273 @@
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-cosmo-users-users-table {
+  width: min(900px, 100% - 3rem);
+  margin-inline: auto;
+  position: relative;
+
+  button, dialog, a {
+    outline: none;
+  }
+
+  a {
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:visited {
+      color: inherit;
+    }
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  table {
+    border-collapse: collapse;
+    background: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 69%);
+    width: 100%;
+    font-size: 15px;
+    font-weight: 500;
+    color: black;
+
+    td, th, caption {
+      padding: 1rem;
+    }
+
+    @media (max-width: 650px) {
+      th {
+        display: none;
+      }
+
+      td {
+        display: grid;
+        grid-template-columns: 10ch auto;
+
+        &::before {
+          content: attr(aria-label) ": ";
+          text-transform: capitalize;
+          font-weight: bold;
+        }
+
+        &:first-child {
+          padding-top: 1.5rem;
+        }
+
+        &:last-child {
+          padding-bottom: 1.5rem;
+        }
+      }
+    }
+
+    caption {
+      background: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 69%);
+      text-transform: uppercase;
+      color: white;
+      text-align: left;
+      font-size: 1.5em;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.25);
+    }
+
+    tr:nth-child(odd) {
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    th {
+      background-color: rgba(0, 0, 0, 0.5);
+      vertical-align: bottom;
+      text-align: left;
+      color: white;
+    }
+
+    td {
+      vertical-align: text-top;
+    }
+
+    td:first-child {
+      padding-left: 1rem;
+    }
+  }
+
+  .cosmo-users--overlay {
+    --overlay-height: calc( 100dvh - var( --wp-admin--admin-bar--height, 0px ) );
+    --overlay-header-height: 76px;
+    height: var(--overlay-height);
+    position: fixed;
+    will-change: transform;
+    transform: translate(0, 100%);
+    transition: transform 250ms ease-out;
+    bottom: -5%;
+    background-color: white;
+    border: none;
+    border-radius: 1rem 1rem 0 0;
+    box-shadow: 0 -8px 24px rgba(77, 89, 102, 0.24);
+    overflow: auto;
+    padding-top: 0;
+
+    &::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+      transition: background 0.3s ease;
+      backdrop-filter: blur(.1em);
+    }
+
+    @media (min-width: 768px) {
+      max-width: 768px;
+      width: 85%;
+    }
+
+    &.is-active {
+      transform: translate(0, 0);
+    }
+
+    &__header {
+
+      h2 {
+        padding-top: 0;
+      }
+
+      align-items: center;
+      background-color: #fff;
+      display: flex;
+      height: 72px;
+      justify-content: space-between;
+      margin-inline: -1rem;
+      padding-block: 1rem .5rem;
+      padding-inline: 1rem 2rem;
+      position: sticky;
+      top: 0;
+
+      &::before {
+        background-color: #d9d9d9;
+        border-radius: 2px;
+        content: "";
+        height: 2px;
+        inset-block-start: 4px;
+        inset-inline-start: calc(50% - 20px);
+        position: absolute;
+        width: 40px;
+      }
+    }
+
+    &__close {
+      background-color: transparent;
+      color: #000;
+      padding: 0;
+      position: absolute;
+      right: 44px;
+      top: 0;
+      cursor: pointer;
+      border: 1rem solid transparent;
+      inset-block-start: 0;
+      inset-inline-end: 0;
+      height: 52px;
+      width: 52px;
+
+      &::before, &::after {
+        border-bottom: 2px solid;
+        content: "";
+        height: 1px;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform-origin: center;
+        transition: transform .32s ease-out;
+        width: 20px;
+      }
+
+      &::before {
+        transform: rotate(135deg);
+      }
+
+      &::after {
+        transform: rotate(-135deg);
+      }
+
+      &:hover::before {
+        transform: rotate(225deg);
+      }
+
+      &:hover::after {
+        transform: rotate(-225deg);
+      }
+    }
+
+    &__content {
+      dl {
+        display: grid;
+        grid-gap: 4px 16px;
+        grid-template-columns: max-content;
+      }
+      dt {
+        font-weight: bold;
+      }
+      dd {
+        margin: 0;
+        grid-column-start: 2;
+      }
+    }
+  }
+
+  /* Skeleton Container */
+  .skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .placeholder {
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .text {
+      height: 20px;
+      width: 60%;
+
+      &.short {
+        width: 30%;
+      }
+
+      &.full {
+        width: 100%;
+      }
+    }
+
+    /* Animation */
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+      animation: loading 1.5s infinite;
+    }
+  }
+
+  /* Keyframes for the animation */
+  @keyframes loading {
+    0% {
+      left: -100%;
+    }
+    50% {
+      left: 50%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+}
