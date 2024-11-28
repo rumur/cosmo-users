@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Rumur\WordPress\CosmoUsers\Users\Services;
 
-use Rumur\WordPress\CosmoUsers\DataTransformer;
+use Rumur\WordPress\CosmoUsers\Support\Transformer\AbstractDataTransformer;
 
 /**
  * Class JsonPlaceholderUserTransformer
@@ -15,7 +15,7 @@ use Rumur\WordPress\CosmoUsers\DataTransformer;
  *
  * @package Rumur\WordPress\CosmoUsers\Users\Services
  */
-class JsonPlaceholderUserTransformer implements DataTransformer
+class JsonPlaceholderUserTransformer extends AbstractDataTransformer
 {
     /**
      * @param object $data
@@ -32,54 +32,23 @@ class JsonPlaceholderUserTransformer implements DataTransformer
      */
     public function transform(mixed $data): array
     {
-        $data = $this->normalize($data);
-
         return [
-            'id' => absint($data->id),
-            'name' => esc_attr($data->name),
-            'username' => esc_attr($data->username),
-            'email' => esc_attr($data->email),
-            'phone' => esc_attr($data->phone),
-            'website' => esc_attr($data->website),
+            'id' => absint($this->pluckValue($data, 'id')),
+            'name' => esc_attr($this->pluckValue($data, 'name')),
+            'username' => esc_attr($this->pluckValue($data, 'username')),
+            'email' => esc_attr($this->pluckValue($data, 'email')),
+            'phone' => esc_attr($this->pluckValue($data, 'phone')),
+            'website' => esc_attr($this->pluckValue($data, 'website')),
             'company' => [
-                'name' => esc_attr($data->company->name),
-                'slogan' => esc_attr($data->company->catchPhrase),
+                'name' => esc_attr($this->pluckValue($data, 'company.name')),
+                'slogan' => esc_attr($this->pluckValue($data, 'company.catchPhrase')),
             ],
             'address' => [
-                'street' => esc_attr($data->address->street),
-                'suite' => esc_attr($data->address->suite),
-                'city' => esc_attr($data->address->city),
-                'zipcode' => esc_attr($data->address->zipcode),
+                'street' => esc_attr($this->pluckValue($data, 'address.street')),
+                'suite' => esc_attr($this->pluckValue($data, 'address.suite')),
+                'city' => esc_attr($this->pluckValue($data, 'address.city')),
+                'zipcode' => esc_attr($this->pluckValue($data, 'address.zipcode')),
             ],
         ];
-    }
-
-    /**
-     * Normalizes the data.
-     *
-     * @param mixed $data The data to normalize.
-     *
-     * @return object
-     */
-    protected function normalize(mixed $data): object
-    {
-        return (object) wp_parse_args($data, [
-            'id' => 0,
-            'name' => '',
-            'username' => '',
-            'email' => '',
-            'phone' => '',
-            'website' => '',
-            'company' => [
-                'name' => '',
-                'slogan' => '',
-            ],
-            'address' => [
-                'street' => '',
-                'suite' => '',
-                'city' => '',
-                'zipcode' => '',
-            ],
-        ]);
     }
 }
