@@ -87,6 +87,14 @@ class Concurrent implements Client
                 } catch (Throwable $exception) {
                     unset($fibers[$idx]);
 
+                    // When the exception is thrown and fiber is not yet suspended,
+                    // It means that the issue is occurred before the interception,
+                    // So in this case we should bubble up the exception,
+                    // as it has to break the whole queue.
+                    if (!$fiber->isSuspended()) {
+                        throw $exception;
+                    }
+
                     $fiber->throw($exception); // Throw the exception if Fiber terminates with one.
                 }
             }
