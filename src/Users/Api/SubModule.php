@@ -40,8 +40,6 @@ class SubModule implements ModuleContract
 
     /**
      * Register REST Api routes.
-     *
-     * @return void
      */
     public function registerRestRoutes(): void
     {

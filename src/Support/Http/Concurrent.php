@@ -190,7 +190,7 @@ class Concurrent implements Client
                 return $response; // Return if the request is already resolved (e.g., in unit tests).
             }
 
-            return Fiber::suspend(compact('args', 'url'));
+            return Fiber::suspend(['args' => $args, 'url' => $url]);
         };
     }
 
@@ -222,7 +222,6 @@ class Concurrent implements Client
      * @param array $queue The queue of requests.
      * @param array $resolved The resolved responses.
      *
-     * @return void
      *
      * @throws FailToResolve If neither `\\WpOrg\\Requests\\Requests` nor `\\Requests` class exists.
      */

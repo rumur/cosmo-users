@@ -31,10 +31,8 @@ class NullCache implements Cache
      * @param string $key The to validate key.
      *
      * @throws InvalidCacheKey thrown if the $key string is not a legal value.
-     *
-     * @return void
      */
-    private static function validateKey(string $key): void
+    private function validateKey(string $key): void
     {
         if (\preg_match('#[{}()/\\\@:]#', $key)) {
             throw new InvalidCacheKey(\esc_attr($key));
@@ -53,7 +51,7 @@ class NullCache implements Cache
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        static::validateKey($key);
+        $this->validateKey($key);
 
         return $default;
     }
@@ -91,7 +89,7 @@ class NullCache implements Cache
      */
     public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
-        static::validateKey($key);
+        $this->validateKey($key);
 
         return false;
     }
@@ -126,7 +124,6 @@ class NullCache implements Cache
      *
      * @param string $key The cache item key.
      *
-     * @return bool
      *
      * @throws InvalidCacheKey thrown if the $key string is not a legal value.
      */
@@ -163,7 +160,7 @@ class NullCache implements Cache
     public function deleteMultiple(iterable $keys): bool
     {
         foreach ($keys as $key => $ignore) {
-            static::validateKey($key);
+            $this->validateKey($key);
         }
 
         return false;

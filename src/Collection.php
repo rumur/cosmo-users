@@ -27,18 +27,14 @@ class Collection implements Arrayable, \IteratorAggregate, \Countable, \JsonSeri
 
     /**
      * Checks whether the collection is empty or not.
-     *
-     * @return bool
      */
     public function isEmpty(): bool
     {
-        return empty($this->items);
+        return $this->items === [];
     }
 
     /**
      * Provides the number of items in the collection.
-     *
-     * @return int
      */
     public function count(): int
     {

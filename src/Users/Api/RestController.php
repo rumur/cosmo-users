@@ -25,14 +25,12 @@ class RestController extends \WP_REST_Controller
 
     /**
      * Register the routes for the users and associates them with the controller.
-     *
-     * @return void
      */
     public function register_routes(): void // phpcs:ignore PSR1.Methods.CamelCapsMethodName
     {
         register_rest_route($this->namespace, '/' . $this->rest_base, [
             'methods' => 'GET',
-            'callback' => [$this, 'get_items'],
+            'callback' => $this->get_items(...),
             'permission_callback' => '__return_true',
             'args' => [
                 'limit' => [
@@ -48,7 +46,7 @@ class RestController extends \WP_REST_Controller
 
         register_rest_route($this->namespace, '/' . $this->rest_base . '/(?P<id>\d+)', [
             'methods' => 'GET',
-            'callback' => [$this, 'get_item'],
+            'callback' => $this->get_item(...),
             'permission_callback' => '__return_true',
         ]);
     }

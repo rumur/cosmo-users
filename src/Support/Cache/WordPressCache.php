@@ -32,10 +32,8 @@ class WordPressCache implements Cache
      * @param string $key The key to validate.
      *
      * @throws InvalidCacheKey thrown if the $key string is not a legal value.
-     *
-     * @return void
      */
-    private static function validateKey(string $key): void
+    private function validateKey(string $key): void
     {
         if (preg_match('#[{}()/\\\@:]#', $key)) {
             throw new InvalidCacheKey(esc_attr($key));
@@ -54,7 +52,7 @@ class WordPressCache implements Cache
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        static::validateKey($key);
+        $this->validateKey($key);
 
         $value = \wp_cache_get($key, $this->group);
 
@@ -97,7 +95,7 @@ class WordPressCache implements Cache
      */
     public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
-        static::validateKey($key);
+        $this->validateKey($key);
 
         return \wp_cache_set( // phpcs:ignore WordPressVIPMinimum.Performance.LowExpiryCacheTime.CacheTimeUndetermined
             $key,
@@ -136,7 +134,6 @@ class WordPressCache implements Cache
      *
      * @param string $key The cache key.
      *
-     * @return bool
      *
      * @throws InvalidCacheKey thrown if the $key string is not a legal value.
      */
@@ -156,7 +153,7 @@ class WordPressCache implements Cache
      */
     public function delete(string $key): bool
     {
-        static::validateKey($key);
+        $this->validateKey($key);
         return wp_cache_delete($key, $this->group);
     }
 

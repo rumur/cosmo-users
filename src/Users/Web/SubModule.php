@@ -97,8 +97,6 @@ class SubModule implements ModuleContract
      * Register all necessary web endpoints.
      *
      * @globals \WP_Rewrite $wp_rewrite
-     *
-     * @return void
      */
     public function registerWebEndpoints(): void
     {
@@ -130,8 +128,6 @@ class SubModule implements ModuleContract
      * Parse the request to handle the web endpoints.
      *
      * @global \WP_Query $wp_query
-     *
-     * @return void
      */
     public function parseRequest(): void
     {
@@ -145,8 +141,6 @@ class SubModule implements ModuleContract
 
     /**
      * Render the page HTML.
-     *
-     * @return string
      */
     protected function renderPageHtml(): string
     {
@@ -161,8 +155,6 @@ class SubModule implements ModuleContract
      * Render the block-based theme template.
      *
      * @globals string $_wp_current_template_content
-     *
-     * @return string
      */
     protected function renderBlockBasedTheme(): string
     {
@@ -195,8 +187,6 @@ class SubModule implements ModuleContract
 
     /**
      * Render the classic theme template.
-     *
-     * @return string
      */
     protected function renderClassicTheme(): string
     {
@@ -215,8 +205,6 @@ class SubModule implements ModuleContract
      * Filter the document title.
      *
      * @param string $title Default document title.
-     *
-     * @return string
      */
     public function renderDocumentTitle(string $title): string
     {

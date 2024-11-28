@@ -40,11 +40,10 @@ class InMemory implements Cache
      *
      * @param string $key The key to validate.
      *
-     * @return void
      * @throws InvalidCacheKey thrown if the $key string is not a legal value.
      *
      */
-    private static function validateKey(string $key): void
+    private function validateKey(string $key): void
     {
         if (\preg_match('#[{}()/\\\@:]#', $key)) {
             throw new InvalidCacheKey(esc_attr($key));
@@ -63,7 +62,7 @@ class InMemory implements Cache
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        static::validateKey($key);
+        $this->validateKey($key);
 
         if (!\array_key_exists($key, $this->storage)) {
             return $default;
@@ -111,7 +110,7 @@ class InMemory implements Cache
      */
     public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
-        static::validateKey($key);
+        $this->validateKey($key);
 
         // Store the value in the cache.
         $this->storage[$key] = $this->createCacheItem($value, $ttl);
@@ -135,7 +134,7 @@ class InMemory implements Cache
     {
         foreach ($values as $key => $value) {
             \assert(\is_string($key), 'Cache key must be a string');
-            static::validateKey($key);
+            $this->validateKey($key);
             $this->storage[$key] = $this->createCacheItem($value, $ttl);
         }
 
@@ -149,7 +148,6 @@ class InMemory implements Cache
      *
      * @param string $key The cache key.
      *
-     * @return bool
      *
      * @throws InvalidCacheKey thrown if the $key string is not a legal value.
      */
@@ -169,7 +167,7 @@ class InMemory implements Cache
      */
     public function delete(string $key): bool
     {
-        static::validateKey($key);
+        $this->validateKey($key);
 
         if (!\array_key_exists($key, $this->storage)) {
             return false;
@@ -246,8 +244,6 @@ class InMemory implements Cache
 
     /**
      * Trims the cache storage by removing the oldest items.
-     *
-     * @return void
      */
     private function trimStorage(): void
     {
