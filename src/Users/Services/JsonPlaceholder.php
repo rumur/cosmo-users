@@ -9,6 +9,7 @@ use Rumur\WordPress\CosmoUsers\Cache;
 use Rumur\WordPress\CosmoUsers\Client;
 use Rumur\WordPress\CosmoUsers\Collection;
 use Rumur\WordPress\CosmoUsers\Transformer;
+use Rumur\WordPress\CosmoUsers\Users\Transformers;
 use Rumur\WordPress\CosmoUsers\Support\Cache\NullCache;
 use Rumur\WordPress\CosmoUsers\Users\ReadService;
 
@@ -36,7 +37,7 @@ class JsonPlaceholder implements ReadService
     {
         $users = $this->fetchData(args: ['_limit' => $limit, '_start' => $offset]);
 
-        return $this->transformer->collection($users, new JsonPlaceholderUserTransformer());
+        return $this->transformer->collection($users, new Transformers\JsonPlaceholderUser());
     }
 
     public function userById(int $id): array
@@ -48,7 +49,7 @@ class JsonPlaceholder implements ReadService
             return [];
         }
 
-        return $this->transformer->item($user, new JsonPlaceholderUserTransformer());
+        return $this->transformer->item($user, new Transformers\JsonPlaceholderUser());
     }
 
     /**
@@ -78,6 +79,8 @@ class JsonPlaceholder implements ReadService
 
         // If there was an error, return an empty array.
         if (is_wp_error($response)) {
+            _doing_it_wrong(__METHOD__, esc_attr($response->get_error_message()), '0.1.0');
+
             return [];
         }
 

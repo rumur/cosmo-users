@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rumur\WordPress\CosmoUsers\Users\Services;
+namespace Rumur\WordPress\CosmoUsers\Users\Transformers;
 
 use Rumur\WordPress\CosmoUsers\Support\Transformer\AbstractDataTransformer;
 
@@ -15,7 +15,7 @@ use Rumur\WordPress\CosmoUsers\Support\Transformer\AbstractDataTransformer;
  *
  * @package Rumur\WordPress\CosmoUsers\Users\Services
  */
-class JsonPlaceholderUserTransformer extends AbstractDataTransformer
+class JsonPlaceholderUser extends AbstractDataTransformer
 {
     /**
      * @param object $data
