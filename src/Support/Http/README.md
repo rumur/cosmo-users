@@ -5,6 +5,25 @@
 **Concurrent HTTP Client** enables concurrent request dispatching using **PHP Fibers** [Official Documentation](https://www.php.net/manual/en/language.fibers.php), introduced in PHP 8.1.
 It allows developers to perform concurrent, non-blocking requests within WordPress, enhancing performance and improving user experience.
 
+### How it works
+
+WordPress has a built-in HTTP API that allows developers to send HTTP requests using the `wp_remote_*` functions.
+These functions are sequential; when they are called, they block the execution of the script until the request is completed.
+
+However, if we look inside the WordPress HTTP package, we can find there a very interesting method - `request_multiple`.  
+This method allows us to send multiple requests concurrently, but it's not possible to use it with the `wp_remote_*` functions directly.
+
+This is where Fibers come into play.
+
+We know that each `wp_remote_*` function will be called via a filter `pre_http_request`, which can be hijacked if we return anything that is not a `false` from it.
+So with that said, we can hijack the `pre_http_request` filter and replace the `wp_remote_*` functions with the `request_multiple` method.
+
+So, when we pass an array of closures to the `resolve` method, it creates a Fiber for each closure,
+then it creates an interceptor and hooks via the `pre_http_request` filter; it means that all requests will be passed through this interceptor,
+where with the help of Fiber we pause the execution of each request, take its args, and put it into a queue.
+Once all requests are in the queue, we take all requests from the queue and send them via the `request_multiple` method concurrently,
+once we have responses, we resume the execution of each request and return the response as it would have been returned by the `wp_remote_*` function natively.
+
 ## Features
 
 - **Concurrent Request Handling**: Resolves multiple HTTP requests concurrently.

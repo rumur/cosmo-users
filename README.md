@@ -4,21 +4,62 @@
 
 ### Minimum Requirements:
  - PHP: 8.1+
- - WordPress: 6.6+
+ - WordPress: 6.5+
  - node: 20.0+
  - composer: 2.0+
 
-## Installation
+## Overview
 
-```composer require rumur/cosmo-users```
+This is a plugin that features OOP and SOLID principles of engineering to provide a future-proof approach for scaling the application. 
+This means that all modules are not highly coupled but coherent and dependent only on an abstraction.
+
+The development environment of this plugin is based on the [wp-env](https://www.npmjs.com/package/@wordpress/env).
+
+For managing plugin’s modules/components, we use an internal implementation of a DI container that implements PSR-11 standards and can be effortlessly swapped with another 3rd party container implementation e.g Illuminate/Container if needed.
+
+For delivering fast 3rd party API consumption, this plugin possesses a [Concurrent](./src/Support/Http/README.md) client to dispatch requests, leveraging modern PHP8.1 features like [Fibers](https://php.net/fibers).
+While it uses `Fibers` as a way of managing requests, it still supports WordPress internal HTTP functionality and all requests just a regular `wp_(safe_)remote_(get|post)` functions; 
+therefore, it keeps a known approach to all WordPress developers but enhances the performance of the plugin.
+
+When we’re dealing with 3rd party API calls, it’s always a good idea to use a caching layer to provide a better user experience and to avoid limitations from an API provider side that can significantly reduce the cost of using it.
+
+For a caching layer in this plugin, we use an internal WordPress caching system, which will allow us to leverage any drop-in solution on a hosting provider, like Memcache or Redis. 
+It provides a core functionality via a [Cache interface](./src/Support/Cache/README.md) that, in its turn, enhances a [PSR-6](https://www.php-fig.org/psr/psr-6) simple cache standard and 
+can be effortlessly swapped with any other caching implementation out there, without a codebase being refactored.
+
+The next thing when you work with the 3rd party APIs you have to do is to introduce a data normalization layer.
+This layer provides overall data integrity and cleans up any potential vulnerabilities that might be sent from the other side.
+
+In the plugin’s context, we have a set of two interfaces, [Transformer](./src/Transformer.php) and [DataTransformer](./src/DataTransformer.php),
+which are both being used to create this layer. For performing all the work, we bring in the support of a well known 3rd party package - [Fractal](https://fractal.thephpleague.com/), from a PHP League.
+
+When we bring in a 3rd party package like this, we have to protect our codebase from being directly used, 
+as it will make it harder to replace this package in the future, in case we no longer like it or for any other reason.
+
+To protect the exposure of this package, we use a [FractalAdapter](./src/Support/Transformer/FractalAdapter.php) which in its turn implements [Transformer](./src/Transformer.php) interface described above, 
+thus making it safe for use inside the codebase via DI.
+
+### Extension
+
+Plugin can be extended via so called - Modules. Modules are nothing else but simple classes that implement [Module](./src/Module.php) interface. 
+Each module not limited to add its own submodules. This way it easily allows to extend the plugin functionality in the future and keeps the codebase clean and maintainable.
+
+### Frontend
+
+The Frontend part of this plugin is being provided via [WordPress Interactivity API](https://developer.wordpress.org/block-editor/reference-guides/interactivity-api/) and leverages declarative way of writing the code, 
+and connecting both worlds Backend and Frontend.
+
+The main list of users delivered via simple HTML table, which can be seen by visiting this url http://localhost:8888/cosmo-users or http://localhost:8888/?cosmo-users=1 if a pretty permalinks are disabled.
+
+Each row of this table represents the short preview of the user’s data. Upon clicking on the row, the app opens up the modal where we fetch data for a single user via AJAX request. 
+To close this modal, you can click either on the “x” button in the top right corner or press the _ESC_ button. 
+On slow connections, users might close the modal before data gets fetched from a server. 
+For this particular use case, we have an “abort” mechanism for requests that started but don’t have to be fulfilled.
 
 ## Usage
 
-This package is a demo WordPress plugin that provides a simple way to show users from a third party APIs in our case https://jsonplaceholder.typicode.com/users service.
-The development environment of this plugin is based on the [wp-env](https://www.npmjs.com/package/@wordpress/env).
-
 It includes the following features:
-- PHP Code Styles and Linting
+- PHP Code Styles and Linting, also supports partial linting of staged files, upon commit.
 - PHP Rector
 - PHP Unit Testing
 
@@ -46,7 +87,7 @@ $ npm run stop
 
 ## [Container](src/Support/Container/README.md)
 
-The `Container` class is a simple implementation of the PSR-11 container interface, for more details check the [Container README](src/Support/Container/README.md).
+The `Container` class is a simple implementation of the [PSR-11](https://www.php-fig.org/psr/psr-11) container interface, for more details check the [Container README](src/Support/Container/README.md).
 
 ## [Templates](src/Support/Template/README.md)
 
@@ -95,8 +136,8 @@ class MyTransformer implements DataTransformer
     }
 }
 
-$transformedCollection = $plugin->transformer->collection([...], new MyTransformer());
-$transformedItem = $plugin->transformer->item([...], new MyTransformer()); 
+$transformedCollection = $plugin->get(\Rumur\WordPress\CosmoUsers\Transformer::class)->collection([...], new MyTransformer());
+$transformedItem = $plugin->get(\Rumur\WordPress\CosmoUsers\Transformer::class)->item([...], new MyTransformer()); 
 ```
 
 ## License
