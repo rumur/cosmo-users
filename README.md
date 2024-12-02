@@ -95,6 +95,18 @@ To stop the local env, run the following command:
 $ npm run stop
 ```
 
+To run the PHP Code Style and Linting, run the following command:
+
+```bash
+$ npm run lint
+```
+
+To run the PHP Unit Testing, run the following command:
+
+```bash
+$ npm run test
+```
+
 ## [Container](src/Support/Container/README.md)
 
 The `Container` class is a simple implementation of the [PSR-11](https://www.php-fig.org/psr/psr-11) container interface, for more details check the [Container README](src/Support/Container/README.md).
