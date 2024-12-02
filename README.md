@@ -69,6 +69,16 @@ To install all the dependencies, run the following command:
 $ npm install
 ```
 
+To **build the plugin's assets**, run the following command:
+
+```bash
+$ npm run assets:build
+```
+
+> [!WARNING]
+> The plugin's assets should be built 👆🏻before use, otherwise, 
+> the plugin will throw an error saying that the assets are missing.
+
 To start the local env, run the following command:
 
 ```bash
