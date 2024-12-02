@@ -39,8 +39,12 @@ try {
         // Register the plugin's Template service.
         $plugin->singleton(
             Template::class,
-            static fn(): Template => new Support\Template\Manager(
-                new Support\FileLocator\Theme('parts/cosmo-users', 'templates/cosmo-users', 'template-parts/cosmo-users'),
+            static fn (): Template => new Support\Template\Manager(
+                new Support\FileLocator\Theme(
+                    'parts/cosmo-users',
+                    'templates/cosmo-users',
+                    'template-parts/cosmo-users'
+                ),
                 new Support\FileLocator\Direct(lookupDir: __DIR__ . '/parts'),
             )
         );
@@ -71,7 +75,7 @@ try {
         // Register plugin's Transformer service.
         $plugin->singleton(
             Transformer::class,
-            static fn(): Transformer => $plugin->resolve(Support\Transformer\FractalAdapter::class)
+            static fn (): Transformer => $plugin->resolve(Support\Transformer\FractalAdapter::class)
         );
 
         // Register plugin's User modules and all its dependencies.
