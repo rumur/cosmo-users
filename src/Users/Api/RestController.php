@@ -74,19 +74,28 @@ class RestController extends \WP_REST_Controller
      *
      * @param \WP_REST_Request $request The request object.
      *
-     * @return \WP_REST_Response The response data.
+     * @return \WP_REST_Response|\WP_Error The response data.
      */
-    public function get_item($request): \WP_REST_Response // phpcs:ignore PSR1.Methods.CamelCapsMethodName, Inpsyde.CodeQuality.NoAccessors.NoGetter, Inpsyde.CodeQuality.ArgumentTypeDeclaration.NoArgumentType -- It's a WP REST API method.
+    public function get_item($request): \WP_REST_Response|\WP_Error // phpcs:ignore PSR1.Methods.CamelCapsMethodName, Inpsyde.CodeQuality.NoAccessors.NoGetter, Inpsyde.CodeQuality.ArgumentTypeDeclaration.NoArgumentType -- It's a WP REST API method.
     {
+        $responseError = new \WP_Error(
+            'rest_user_not_found',
+            __('User not found.', 'cosmo-users'),
+            ['status' => \WP_Http::NOT_FOUND]
+        );
+
         try {
-            return new \WP_REST_Response(
-                $this->userService->userById((int) $request->get_param('id')),
-                \WP_Http::OK
-            );
+            $user = $this->userService->userById((int) $request->get_param('id'));
+
+            if ($user === []) {
+                return $responseError;
+            }
+
+            return new \WP_REST_Response($user, \WP_Http::OK);
         } catch (Exception $error) {
-            return new \WP_REST_Response([
-                'message' => $error->getMessage(),
-            ], 404);
+            _doing_it_wrong(__METHOD__, esc_attr($error->getMessage()), '0.1.0');
         }
+
+        return $responseError;
     }
 }
