@@ -31,21 +31,20 @@ interface Container extends ContainerInterface
      * @param TConcrete|null $concrete The implementation or a factory to create an instance with.
      * @param bool $singleton Whether current abstract should be treated as a singleton.
      *
-     * @return static
-     *
-     * @throws AlreadyInstantiated In case if the abstract has already been instantiated, and we try to bind it again.
+     * @throws AlreadyInstantiated In case if the abstract has already been instantiated,
+     * and we try to bind it again.
      */
-    public function bind(string $abstract, $concrete = null, bool $singleton = false): static;
+    public function bind(string $abstract, $concrete = null, bool $singleton = false): static; // phpcs:ignore Inpsyde.CodeQuality.ArgumentTypeDeclaration.NoArgumentType -- It's a generic type.
 
     /**
      * Calls any callable callback and attempts to inject all its dependencies automatically.
      *
-     * @param callable $callback Any callable to be called and provided with its dependencies automatically.
-     * @param array<non-empty-string, mixed> $args The arguments that need to be overwritten instead of autowiring.
+     * @param callable $callback Any callable to provided with its dependencies automatically.
+     * @param array<non-empty-string, mixed> $args The arguments to swap instead of autowiring.
      *
      * @return mixed The result of the callable callback.
      *
-     * @throws ContainerExceptionInterface In case if it's impossible to execute the given callable callback.
+     * @throws ContainerExceptionInterface In case it fails to execute the given callback.
      */
     public function call(callable $callback, array $args = []): mixed;
 
@@ -67,9 +66,8 @@ interface Container extends ContainerInterface
      * @param class-string<TInstance> $abstract The abstract key.
      * @param TConcrete|null $concrete The implementation or a factory to create an instance with.
      *
-     * @return static
-     *
-     * @throws AlreadyInstantiated In case if the abstract has already been instantiated, and we try to bind it again.
+     * @throws AlreadyInstantiated In case if the abstract has already been instantiated,
+     * and we try to bind it again.
      */
-    public function singleton(string $abstract, $concrete = null): static;
+    public function singleton(string $abstract, $concrete = null): static; // phpcs:ignore Inpsyde.CodeQuality.ArgumentTypeDeclaration.NoArgumentType -- It's a generic type.
 }

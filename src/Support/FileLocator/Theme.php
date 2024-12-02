@@ -44,9 +44,10 @@ class Theme implements Locator
     {
         $files = array_reduce(
             $this->lookupDirs,
-            static function (array $places, string $folder) use ($path): array {
-                return array_merge($places, [sprintf('%s/%s', $folder, ltrim($path, '/'))]);
-            },
+            static fn (array $places, string $folder): array => array_merge(
+                $places,
+                [sprintf('%s/%s', $folder, ltrim($path, '/'))]
+            ),
             []
         );
 

@@ -85,8 +85,6 @@ class Container implements ContainerContract
      * It does however mean that `get($id)` will not throw a `NotFoundExceptionInterface`.
      *
      * @param class-string<TInstance> $id Identifier of the entry to look for.
-     *
-     * @return bool
      */
     public function has(string $id): bool
     {
@@ -98,8 +96,6 @@ class Container implements ContainerContract
      *
      * @param class-string<TInstance> $abstract The abstract key.
      * @param \Closure|TConcrete|null $concrete The class of the implementation.
-     *
-     * @return static
      */
     public function singleton(string $abstract, $concrete = null): static
     {
@@ -111,14 +107,13 @@ class Container implements ContainerContract
      *
      * @param class-string<TInstance> $abstract The abstract key.
      * @param TConcrete|null $concrete The implementation or a factory to create an instance with,
-     *                                null if the abstract is the same as the concrete implementation.
+     * null if the abstract is the same as the concrete implementation.
      * @param bool $singleton Marks class as singleton.
      *
-     * @return static
-     *
-     * @throws AlreadyInstantiated When abstract has been instantiated as singleton, and we attempt to bind it again.
+     * @throws AlreadyInstantiated When abstract has been instantiated as singleton,
+     * and we attempt to bind it again.
      */
-    public function bind(string $abstract, $concrete = null, bool $singleton = false): static
+    public function bind(string $abstract, $concrete = null, bool $singleton = false): static // phpcs:ignore Inpsyde.CodeQuality.ArgumentTypeDeclaration.NoArgumentType -- It's a generic type.
     {
         $concrete ??= $abstract;
 
@@ -266,8 +261,6 @@ class Container implements ContainerContract
 
     /**
      * Discards passed arguments for a current build after it gets built.
-     *
-     * @return void
      */
     protected function withdrawLatestArgs(): void
     {
@@ -277,7 +270,6 @@ class Container implements ContainerContract
     /**
      * @param ReflectionParameter[] $dependencies Collection of dependencies.
      *
-     * @return array
      * @throws Exceptions\NotInstantiable In case if it's impossible to instantiate a dependency.
      */
     protected function resolveDependencies(array $dependencies): array // phpcs:ignore Inpsyde.CodeQuality.NestingLevel.High -- We do recursive calls.
@@ -325,8 +317,6 @@ class Container implements ContainerContract
      * Gets an alternative param passed by the dev.
      *
      * @param ReflectionParameter $dependency The dependency parameter.
-     *
-     * @return mixed
      */
     protected function overrideArgs(ReflectionParameter $dependency): mixed
     {
@@ -335,8 +325,6 @@ class Container implements ContainerContract
 
     /**
      * Safely provides params.
-     *
-     * @return array
      */
     protected function overrideArgsLatest(): array
     {
@@ -395,8 +383,6 @@ class Container implements ContainerContract
      * Converts the dependency to a parameter name.
      *
      * @param ReflectionParameter $dependency The dependency parameter.
-     *
-     * @return string|null
      */
     protected function dependencyToParamName(ReflectionParameter $dependency): ?string
     {

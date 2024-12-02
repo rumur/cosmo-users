@@ -27,22 +27,38 @@ class Collection implements Arrayable, \IteratorAggregate, \Countable, \JsonSeri
 
     /**
      * Checks whether the collection is empty or not.
-     *
-     * @return bool
      */
     public function isEmpty(): bool
     {
-        return empty($this->items);
+        return $this->items === [];
     }
 
     /**
      * Provides the number of items in the collection.
-     *
-     * @return int
      */
     public function count(): int
     {
         return count($this->items);
+    }
+
+    /**
+     * Filters the items in the collection by a given callback or keys.
+     *
+     * @return TValue|null The value of the first item in the collection.
+     */
+    public function first(): mixed
+    {
+        return $this->items[array_key_first($this->items)] ?? null;
+    }
+
+    /**
+     * Get the last item from the collection.
+     *
+     * @return TValue|null The value of the last item in the collection.
+     */
+    public function last(): mixed
+    {
+        return $this->items[array_key_last($this->items)] ?? null;
     }
 
     /**

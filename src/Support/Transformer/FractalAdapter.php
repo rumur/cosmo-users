@@ -70,7 +70,6 @@ final class FractalAdapter implements Transformer
     }
 
     /**
-     * @param callable|DataTransformer $transformer
      * @return callable(TOrigin):array<TTransformed>
      */
     private function adaptToFractalTransformer(callable|DataTransformer $transformer): callable

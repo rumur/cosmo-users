@@ -63,9 +63,7 @@ class Plugin extends Support\Container\Container
      *
      * @param callable|null $configurator The plugin configurator.
      *
-     * @return static
-     *
-     * @throws NotInstantiable When the plugin is not able to instantiate dependencies of the configurator.
+     * @throws NotInstantiable When it's not able to instantiate dependencies of the configurator.
      */
     public static function instance(?callable $configurator = null): static
     {
@@ -92,8 +90,6 @@ class Plugin extends Support\Container\Container
      * Checks whether the current theme is a block-based theme.
      *
      * @link https://developer.wordpress.org/themes/getting-started/what-is-a-theme/
-     *
-     * @return bool
      */
     public function isBlockBasedTheme(): bool
     {
@@ -102,8 +98,6 @@ class Plugin extends Support\Container\Container
 
     /**
      * Checks whether the mode is in debug.
-     *
-     * @return bool
      */
     public function isDebugModeOn(): bool
     {
@@ -114,8 +108,6 @@ class Plugin extends Support\Container\Container
      * Normalizes the path.
      *
      * @param string|null $path The path to normalize.
-     *
-     * @return string
      */
     protected function normalizePath(?string $path = null): string
     {
@@ -150,8 +142,6 @@ class Plugin extends Support\Container\Container
      * Provides the full path to the plugin's assets file.
      *
      * @param string|null $path The path to the file or null to get the root directory.
-     *
-     * @return string
      */
     public function pathToAssets(?string $path = null): string
     {
@@ -162,8 +152,6 @@ class Plugin extends Support\Container\Container
      * Provides the full path to the plugin's build file.
      *
      * @param string|null $path The path to the file or null to get the root directory.
-     *
-     * @return string
      */
     public function pathToBuild(?string $path = null): string
     {
@@ -174,8 +162,6 @@ class Plugin extends Support\Container\Container
      * Sets the plugin file.
      *
      * @param string $rootFile Plugin's root file.
-     *
-     * @return Plugin
      */
     public function changeRootFile(string $rootFile): static
     {
@@ -287,8 +273,6 @@ class Plugin extends Support\Container\Container
 
     /**
      * Registers the activation hook.
-     *
-     * @return void
      */
     protected function registerActivationHook(): void
     {
@@ -305,8 +289,6 @@ class Plugin extends Support\Container\Container
 
     /**
      * Registers the deactivation hook.
-     *
-     * @return void
      */
     protected function registerDeactivationHook(): void
     {
@@ -323,8 +305,6 @@ class Plugin extends Support\Container\Container
 
     /**
      * Registers the plugin's custom endpoints.
-     *
-     * @return void
      */
     protected function registerModules(): void // phpcs:ignore Inpsyde.CodeQuality.NestingLevel.High -- It's fine to keep it as is.
     {
@@ -377,8 +357,6 @@ class Plugin extends Support\Container\Container
      * Registers the plugin container bindings.
      *
      * @globals \wpdb $wpdb
-     *
-     * @return void
      */
     protected function registerContainerBindings(): void
     {
