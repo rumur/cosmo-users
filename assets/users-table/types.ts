@@ -20,7 +20,7 @@ export type UsersContext = {
   currentOffset: number;
   isModalOpen: boolean;
   users: Array<User>;
-  modalUser: User;
+  modalUser: User|null;
   error: string;
 };
 
