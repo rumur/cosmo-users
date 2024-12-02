@@ -14,16 +14,18 @@ export type User = {
 }
 
 export type UsersContext = {
-  users: Array<User>;
-  currentUser: User;
-  isModalOpen: boolean;
-  currentOffset: number;
+  permalinksEnabled: boolean;
   modalSelectorId: string;
-  isPermalinkEnabled: boolean;
+  singleUserError: string;
+  currentOffset: number;
+  isModalOpen: boolean;
+  users: Array<User>;
+  modalUser: User;
+  error: string;
 };
 
 export type Modal = {
-  user: User;
-  isOpen: boolean;
   element: HTMLElement | null;
+  isOpen: boolean;
+  user: User;
 }

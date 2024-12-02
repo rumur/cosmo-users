@@ -6,121 +6,173 @@ import { store, getContext, getElement, withScope } from "@wordpress/interactivi
 /**
  * Internal dependencies
  */
+import { useFetch } from './utils';
 import { User, UsersContext, Modal } from './types';
 
 /**
  * Internal Constants
  */
-const USERS_ENDPOINT = '/cosmo/v1/users';
+const USERS_ENDPOINT = 'cosmo/v1/users';
 const USER_HASH_PREFIX = '#user-view-';
 const ANIMATION_SPEED = 250;
-
-type ApiOptions = {
-  path: string;
-}
-
-/**
- * While apiFetch is not possible to use in the modules mode, meanwhile can use the polyfill.
- * - No Nonce handler, just fetch data from the API
- * - No Prefetching, just fetch data when needed
- *
- * @param options<ApiOptions> Options to pass to the fetch function.
- *
- * @return {Promise<User|User[]>} The fetch promise.
- */
-const apiFetch = async (options: ApiOptions): Promise<User | User[]> => {
-  let baseUrl = `/wp-json${options.path}`;
-
-  if (! state.isPermalinkEnabled) {
-    baseUrl = `/?rest_route=${options.path}`;
-  }
-
-  return fetch(baseUrl, {
-    headers: {
-      Accept: 'application/json, */*;q=0.1',
-    }
-  }).then(response => response.json());
-};
 
 const getUserContext = getContext<UsersContext>;
 
 const storeDef = {
   state: {
-    requestedUserName: '',
+    modalUserName: '',
+    openRequests: new Map<string, () => void>(),
     get modal(): Modal {
-      const {currentUser, isModalOpen, modalSelectorId} = getUserContext();
+      const {modalUser, isModalOpen, modalSelectorId} = getUserContext();
 
       return {
-        user: currentUser,
-        isOpen: isModalOpen,
         element: document.getElementById(modalSelectorId),
+        isOpen: isModalOpen,
+        user: modalUser,
       };
     },
-    get isSingleUserLoaded(): boolean {
-      return !!getUserContext().currentUser;
+    get baseApiUrl(): string {
+      let url = '/wp-json';
+
+      if (!getUserContext().permalinksEnabled) {
+        url = '/?rest_route=';
+      }
+
+      return url;
     },
-    get isPermalinkEnabled(): boolean {
-      return !!getUserContext().isPermalinkEnabled;
-    }
+    /**
+     * Provides the error message if any request is failed.
+     */
+    get hasError(): boolean {
+      return !!getUserContext().error;
+    },
+    /**
+     * Provides the error message if any request is failed to fetch a single user.
+     */
+    get hasSingleUserError(): boolean {
+      return !!getUserContext().singleUserError && state.modal.isOpen;
+    },
+    /**
+     * We hide Table when:
+     * - Users are not an array.
+     * - Users are an empty array.
+     */
+    get shouldHideTable(): boolean {
+      const {users} = getUserContext();
+
+      return [
+        !Array.isArray(users),
+        users?.length === 0
+      ].some(Boolean);
+    },
+    /**
+     * We hide Skeleton when:
+     * - We have an error.
+     * - Modal is open, and we don't have a single user yet.
+     */
+    get shouldHideDetailsSkeleton(): boolean {
+      if (state.hasError && state.modal.isOpen) {
+        return true;
+      }
+
+      return state.modal.isOpen && !!state.modal.user;
+    },
+    /**
+     * We hide User Details when:
+     * - We have an error.
+     * - Modal is open, and we don't have a single user yet.
+     */
+    get shouldHideUserDetails(): boolean {
+      if (state.hasError && state.modal.isOpen) {
+        return true
+      }
+
+      return state.modal.isOpen && !state.modal.user?.id;
+    },
   },
   actions: {
     /**
-     * When application starts up, it fetches all users from the server.
-     * If the URL hash contains a user id, it fetches the user details and opens the modal.
+     * Makes request to the given URL.
+     * And handles the error.
      */
-    * startUp() {
-      yield callbacks.handleHashChange();
-      // Fetch all users.
-      yield actions.fetchAllUsers();
+    async apiFetch(url: string, controllable: boolean = false): Promise<any> {
+      const {request, abort} = useFetch(url);
+
+      if (controllable) {
+        state.openRequests.set(url, abort);
+      }
+
+      return request.finally(
+        () => {
+          if (controllable) {
+            state.openRequests.delete(url);
+          }
+        }
+      );
     },
     /**
      * Fetches a single user details by a given user id.
      */
-    fetchUser(id: number): Promise<User> {
+    async fetchUser(id: number): Promise<User> {
       const context = getUserContext();
 
-      return apiFetch({path: `${USERS_ENDPOINT}/${id}`}).then(
-        withScope((user: User) => context.currentUser = user)
-      );
+      context.singleUserError = '';
+
+      return actions
+        .apiFetch(`${state.baseApiUrl}/${USERS_ENDPOINT}/${id}`, true)
+        .catch(
+          withScope((error: Error) => context.singleUserError = error.message)
+        );
+    },
+    /**
+     * Fetches all users from a server.
+     */
+    async fetchAllUsers(): Promise<User[]|string> {
+      const context = getUserContext();
+
+      context.error = '';
+
+      return actions
+        .apiFetch(`${state.baseApiUrl}/${USERS_ENDPOINT}`)
+        .then(
+          withScope((users: User[]) => context.users = users)
+        )
+        .catch(
+          withScope((error: Error) => context.error = error.message)
+        );
     },
     /**
      * Fetches a single user details by a given user id,
      * and opens modal with the user details.
      */
-    * fetchUserAndOpenModal(id: number): Generator<Promise<User>> {
-      const {users = []} = getUserContext();
+    * fetchUserAndOpenModal(id: number): Generator<Promise<User|string>> {
+      const context = getUserContext();
 
-      users.forEach((user: User) => {
+      context?.users?.forEach((user: User) => {
         if (user.id === id) {
-          state.requestedUserName = user.name;
+          state.modalUserName = user.name;
         }
       });
 
       // When we don't have a user yet, we show a loading state.
-      if (!state.requestedUserName) {
-        state.requestedUserName = '...';
+      if (!state.modalUserName) {
+        state.modalUserName = '...';
       }
+
+      // Reset the modal user.
+      context.modalUser = null;
 
       // Open a modal to show a loading state.
       actions.modalOpen();
 
       // Fetch the user details and open the modal.
       yield actions.fetchUser(id).then(
-        withScope((user: User) => {
+        withScope((user: User): User => {
           actions.navigate(`${USER_HASH_PREFIX}${id}`);
-          state.requestedUserName = user.name;
+          state.modalUserName = user.name;
+          context.modalUser = user;
           return user;
         })
-      );
-    },
-    /**
-     * Fetches all users from a server.
-     */
-    fetchAllUsers(): Promise<User[]> {
-      const context = getUserContext();
-
-      return apiFetch({path: USERS_ENDPOINT}).then(
-        withScope((users: User[]) => context.users = users)
       );
     },
     /**
@@ -158,14 +210,38 @@ const storeDef = {
           const originUrl = `${location.origin}${location.pathname}${location.search}`;
 
           actions.navigate(originUrl).then(() => {
-            context.currentUser = null;
+            context.modalUser = null;
           });
         }),
         ANIMATION_SPEED
       )
     },
-  },
-  callbacks: {
+    /**
+     * Handles the close modal button click.
+     * Handles the close the escape key press.
+     */
+    handleClose(evt: Event): void {
+      evt.preventDefault();
+      actions.modalClose();
+
+      // On slow connections there is a possibility that the user clicks on the close button,
+      // and request a new user, so we just abort all previous requests on close modal.
+      state.openRequests.forEach((abort) => abort());
+    },
+    /**
+     * Handles the click on the user row.
+     */
+    async handleClick(evt: Event) {
+      if (evt.target instanceof HTMLAnchorElement) {
+        evt.preventDefault();
+
+        const {
+          ref: {dataset: {id}},
+        } = getElement();
+
+        await actions.fetchUserAndOpenModal(parseInt(id));
+      }
+    },
     /**
      * Opens/Closes the modal when the URL hash changes.
      */
@@ -186,28 +262,16 @@ const storeDef = {
         actions.modalClose();
       }
     },
+  },
+  callbacks: {
     /**
-     * Handles the click on the user row.
+     * When application starts up, it fetches all users from the server.
+     * If the URL hash contains a user id, it fetches the user details and opens the modal.
      */
-    async handleClick(evt: Event) {
-      if (evt.target instanceof HTMLAnchorElement) {
-        evt.preventDefault();
-
-        const {
-          ref: {dataset: {id}},
-        } = getElement();
-
-        await actions.fetchUserAndOpenModal(parseInt(id));
-      }
-    },
-    /**
-     * Handles the close modal button click.
-     * Handles the close the escape key press.
-     */
-    handleClose(evt: Event): void {
-      evt.preventDefault();
-
-      actions.modalClose();
+    * init() {
+      yield actions.handleHashChange();
+      // Fetch all users.
+      yield actions.fetchAllUsers();
     },
   },
 };
