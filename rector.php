@@ -29,6 +29,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->skip([
         // skip var annotation rule since it flags where we use it to coerce variable types
         Rector\CodeQuality\Rector\If_\CombineIfRector::class,
+        Rector\Php81\Rector\Array_\FirstClassCallableRector::class,
         Rector\CodeQuality\Rector\Class_\CompleteDynamicPropertiesRector::class,
         Rector\DeadCode\Rector\Node\RemoveNonExistingVarAnnotationRector::class,
     ]);
