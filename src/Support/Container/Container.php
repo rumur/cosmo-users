@@ -96,6 +96,9 @@ class Container implements ContainerContract
      *
      * @param class-string<TInstance> $abstract The abstract key.
      * @param \Closure|TConcrete|null $concrete The class of the implementation.
+     *
+     * @throws AlreadyInstantiated When abstract has been instantiated as singleton,
+     * and we attempt to bind it again.
      */
     public function singleton(string $abstract, $concrete = null): static
     {
